@@ -58,7 +58,7 @@ app.use("/api", (_req, res, next) => {
 app.use("/api", router);
 
 if (isProd) {
-  const frontendDist = path.resolve(__dirname, "../../deal-file-manager/dist");
+  const frontendDist = path.resolve(__dirname, "../../deal-file-manager/dist/public");
   app.use(express.static(frontendDist));
   app.get("*", (_req, res) => {
     res.sendFile(path.join(frontendDist, "index.html"));
