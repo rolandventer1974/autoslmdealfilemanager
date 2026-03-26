@@ -435,7 +435,7 @@ export default function DealFilePage() {
                         {isUploaded && uploadedDoc && (
                           <>
                             <a
-                              href={`${base}/api${uploadedDoc.fileUrl}`}
+                              href={`${base}${uploadedDoc.fileUrl}`}
                               target="_blank"
                               rel="noopener noreferrer"
                               className="text-xs text-blue-600 hover:underline"
@@ -480,7 +480,7 @@ export default function DealFilePage() {
                             <div className="text-xs text-slate-500">{doc.fileName}</div>
                           </div>
                           <div className="flex items-center gap-2">
-                            <a href={`${base}/api${doc.fileUrl}`} target="_blank" rel="noopener noreferrer" className="text-xs text-blue-600 hover:underline">View</a>
+                            <a href={`${base}${doc.fileUrl}`} target="_blank" rel="noopener noreferrer" className="text-xs text-blue-600 hover:underline">View</a>
                             <button onClick={() => deleteDocMutation.mutate(doc.id)} className="text-xs text-red-500 hover:text-red-700">Remove</button>
                           </div>
                         </div>
