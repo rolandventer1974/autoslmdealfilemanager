@@ -52,8 +52,8 @@ router.get("/deal-files", async (req, res): Promise<void> => {
 
   const conditions = [];
   if (dealerCode) conditions.push(eq(dealFilesTable.dealerCode, dealerCode));
-  if (dateFrom) conditions.push(gte(dealFilesTable.createdAt, new Date(dateFrom)));
-  if (dateTo) conditions.push(lte(dealFilesTable.createdAt, new Date(dateTo)));
+  if (dateFrom) conditions.push(gte(dealFilesTable.createdAt, new Date(dateFrom + "T00:00:00.000Z")));
+  if (dateTo) conditions.push(lte(dealFilesTable.createdAt, new Date(dateTo + "T23:59:59.999Z")));
   if (search) {
     conditions.push(
       or(
