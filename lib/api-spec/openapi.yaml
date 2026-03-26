@@ -1,0 +1,800 @@
+openapi: 3.1.0
+info:
+  title: Api
+  version: 0.1.0
+  description: AutoSLM Deal File Manager API
+servers:
+  - url: /api
+    description: Base API path
+tags:
+  - name: health
+    description: Health operations
+  - name: auth
+    description: Authentication
+  - name: dealFiles
+    description: Deal file operations
+  - name: documents
+    description: Document operations
+  - name: docTypes
+    description: Required document type configuration
+  - name: users
+    description: User management
+paths:
+  /healthz:
+    get:
+      operationId: healthCheck
+      tags: [health]
+      summary: Health check
+      responses:
+        "200":
+          description: Healthy
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HealthStatus"
+
+  /auth/login:
+    post:
+      operationId: login
+      tags: [auth]
+      summary: Log in with username and password
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LoginBody"
+      responses:
+        "200":
+          description: Login successful
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LoginResponse"
+        "401":
+          description: Invalid credentials
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /auth/logout:
+    post:
+      operationId: logout
+      tags: [auth]
+      summary: Log out
+      responses:
+        "200":
+          description: Logged out
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessResponse"
+
+  /auth/me:
+    get:
+      operationId: getMe
+      tags: [auth]
+      summary: Get current authenticated user
+      responses:
+        "200":
+          description: Current user info
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+        "401":
+          description: Not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /deal-files:
+    get:
+      operationId: listDealFiles
+      tags: [dealFiles]
+      summary: List all deal files
+      parameters:
+        - in: query
+          name: search
+          schema:
+            type: string
+          description: Search by customer name or mobile number
+        - in: query
+          name: dateFrom
+          schema:
+            type: string
+          description: Filter from date (ISO date string)
+        - in: query
+          name: dateTo
+          schema:
+            type: string
+          description: Filter to date (ISO date string)
+        - in: query
+          name: status
+          schema:
+            type: string
+            enum: [all, complete, incomplete]
+          description: Filter by completion status
+        - in: query
+          name: dealerCode
+          schema:
+            type: string
+          description: Filter by dealer code
+      responses:
+        "200":
+          description: List of deal files
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/DealFile"
+    post:
+      operationId: createDealFile
+      tags: [dealFiles]
+      summary: Create a new deal file
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateDealFileBody"
+      responses:
+        "201":
+          description: Deal file created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DealFile"
+
+  /deal-files/{id}:
+    get:
+      operationId: getDealFile
+      tags: [dealFiles]
+      summary: Get a single deal file with its documents
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Deal file detail
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DealFileDetail"
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+    patch:
+      operationId: updateDealFile
+      tags: [dealFiles]
+      summary: Update deal file info
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateDealFileBody"
+      responses:
+        "200":
+          description: Updated deal file
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DealFile"
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+    delete:
+      operationId: deleteDealFile
+      tags: [dealFiles]
+      summary: Delete a deal file
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Deleted
+
+  /deal-files/{id}/documents:
+    get:
+      operationId: listDocuments
+      tags: [documents]
+      summary: List all documents for a deal file
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Documents list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Document"
+    post:
+      operationId: uploadDocument
+      tags: [documents]
+      summary: Upload a document to a deal file
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UploadDocumentBody"
+      responses:
+        "201":
+          description: Document uploaded
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Document"
+
+  /deal-files/{id}/documents/{docId}:
+    delete:
+      operationId: deleteDocument
+      tags: [documents]
+      summary: Delete a document from a deal file
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+        - in: path
+          name: docId
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Deleted
+
+  /api-ingest/otp:
+    post:
+      operationId: ingestOtp
+      tags: [dealFiles]
+      summary: API endpoint to receive OTP from AutoSLM and create/update a deal file
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/IngestOtpBody"
+      responses:
+        "200":
+          description: OTP ingested, deal file created or updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DealFile"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /doc-types:
+    get:
+      operationId: listDocTypes
+      tags: [docTypes]
+      summary: List required document types for a dealer
+      parameters:
+        - in: query
+          name: dealerCode
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: List of required document types
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/DocType"
+    post:
+      operationId: createDocType
+      tags: [docTypes]
+      summary: Add a required document type
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateDocTypeBody"
+      responses:
+        "201":
+          description: Document type created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DocType"
+
+  /doc-types/{id}:
+    patch:
+      operationId: updateDocType
+      tags: [docTypes]
+      summary: Update a required document type
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateDocTypeBody"
+      responses:
+        "200":
+          description: Updated document type
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DocType"
+    delete:
+      operationId: deleteDocType
+      tags: [docTypes]
+      summary: Delete a required document type
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Deleted
+
+  /upload/presign:
+    post:
+      operationId: presignUpload
+      tags: [documents]
+      summary: Get a presigned upload URL for a file
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PresignUploadBody"
+      responses:
+        "200":
+          description: Presigned URL info
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PresignUploadResponse"
+
+components:
+  schemas:
+    HealthStatus:
+      type: object
+      properties:
+        status:
+          type: string
+      required:
+        - status
+
+    ErrorResponse:
+      type: object
+      properties:
+        error:
+          type: string
+      required:
+        - error
+
+    SuccessResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+      required:
+        - success
+
+    LoginBody:
+      type: object
+      properties:
+        username:
+          type: string
+        password:
+          type: string
+        dealerCode:
+          type: string
+      required:
+        - username
+        - password
+
+    LoginResponse:
+      type: object
+      properties:
+        user:
+          $ref: "#/components/schemas/User"
+        token:
+          type: string
+      required:
+        - user
+        - token
+
+    User:
+      type: object
+      properties:
+        id:
+          type: integer
+        username:
+          type: string
+        name:
+          type: string
+        email:
+          type: ["string", "null"]
+        role:
+          type: string
+          enum: [admin, manager, sales, finance]
+        dealerCode:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+      required:
+        - id
+        - username
+        - name
+        - role
+        - dealerCode
+        - createdAt
+
+    DealFile:
+      type: object
+      properties:
+        id:
+          type: integer
+        dealerCode:
+          type: string
+        customerName:
+          type: string
+        idNumber:
+          type: ["string", "null"]
+        email:
+          type: ["string", "null"]
+        mobileNumber:
+          type: ["string", "null"]
+        vehicleYear:
+          type: ["string", "null"]
+        vehicleMake:
+          type: ["string", "null"]
+        vehicleModel:
+          type: ["string", "null"]
+        vehicleSpec:
+          type: ["string", "null"]
+        vinNumber:
+          type: ["string", "null"]
+        salesExecutive:
+          type: ["string", "null"]
+        salesManager:
+          type: ["string", "null"]
+        financeCompany:
+          type: ["string", "null"]
+        dealNumber:
+          type: ["string", "null"]
+        status:
+          type: string
+          enum: [incomplete, complete]
+        docsUploaded:
+          type: integer
+        docsRequired:
+          type: integer
+        completionPercent:
+          type: integer
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+      required:
+        - id
+        - dealerCode
+        - customerName
+        - status
+        - docsUploaded
+        - docsRequired
+        - completionPercent
+        - createdAt
+        - updatedAt
+
+    DealFileDetail:
+      allOf:
+        - $ref: "#/components/schemas/DealFile"
+        - type: object
+          properties:
+            documents:
+              type: array
+              items:
+                $ref: "#/components/schemas/Document"
+          required:
+            - documents
+
+    CreateDealFileBody:
+      type: object
+      properties:
+        dealerCode:
+          type: string
+        customerName:
+          type: string
+        idNumber:
+          type: string
+        email:
+          type: string
+        mobileNumber:
+          type: string
+        vehicleYear:
+          type: string
+        vehicleMake:
+          type: string
+        vehicleModel:
+          type: string
+        vehicleSpec:
+          type: string
+        vinNumber:
+          type: string
+        salesExecutive:
+          type: string
+        salesManager:
+          type: string
+        financeCompany:
+          type: string
+        dealNumber:
+          type: string
+      required:
+        - dealerCode
+        - customerName
+
+    UpdateDealFileBody:
+      type: object
+      properties:
+        customerName:
+          type: string
+        idNumber:
+          type: string
+        email:
+          type: string
+        mobileNumber:
+          type: string
+        vehicleYear:
+          type: string
+        vehicleMake:
+          type: string
+        vehicleModel:
+          type: string
+        vehicleSpec:
+          type: string
+        vinNumber:
+          type: string
+        salesExecutive:
+          type: string
+        salesManager:
+          type: string
+        financeCompany:
+          type: string
+        dealNumber:
+          type: string
+
+    Document:
+      type: object
+      properties:
+        id:
+          type: integer
+        dealFileId:
+          type: integer
+        docTypeId:
+          type: ["integer", "null"]
+        docTypeName:
+          type: string
+        fileName:
+          type: string
+        fileUrl:
+          type: string
+        fileType:
+          type: string
+        fileSize:
+          type: ["integer", "null"]
+        source:
+          type: string
+          enum: [upload, api]
+        uploadedAt:
+          type: string
+          format: date-time
+      required:
+        - id
+        - dealFileId
+        - docTypeName
+        - fileName
+        - fileUrl
+        - fileType
+        - source
+        - uploadedAt
+
+    UploadDocumentBody:
+      type: object
+      properties:
+        docTypeId:
+          type: integer
+        docTypeName:
+          type: string
+        fileName:
+          type: string
+        fileUrl:
+          type: string
+        fileType:
+          type: string
+        fileSize:
+          type: integer
+        source:
+          type: string
+          enum: [upload, api]
+      required:
+        - docTypeName
+        - fileName
+        - fileUrl
+        - fileType
+
+    IngestOtpBody:
+      type: object
+      properties:
+        dealerCode:
+          type: string
+        customerName:
+          type: string
+        idNumber:
+          type: string
+        email:
+          type: string
+        mobileNumber:
+          type: string
+        vehicleYear:
+          type: string
+        vehicleMake:
+          type: string
+        vehicleModel:
+          type: string
+        vehicleSpec:
+          type: string
+        vinNumber:
+          type: string
+        salesExecutive:
+          type: string
+        salesManager:
+          type: string
+        financeCompany:
+          type: string
+        dealNumber:
+          type: string
+        otpFileUrl:
+          type: string
+        otpFileName:
+          type: string
+        apiKey:
+          type: string
+      required:
+        - dealerCode
+        - customerName
+        - otpFileUrl
+        - otpFileName
+        - apiKey
+
+    DocType:
+      type: object
+      properties:
+        id:
+          type: integer
+        dealerCode:
+          type: string
+        name:
+          type: string
+        description:
+          type: ["string", "null"]
+        sortOrder:
+          type: integer
+        isRequired:
+          type: boolean
+        createdAt:
+          type: string
+          format: date-time
+      required:
+        - id
+        - dealerCode
+        - name
+        - sortOrder
+        - isRequired
+        - createdAt
+
+    CreateDocTypeBody:
+      type: object
+      properties:
+        dealerCode:
+          type: string
+        name:
+          type: string
+        description:
+          type: string
+        sortOrder:
+          type: integer
+        isRequired:
+          type: boolean
+      required:
+        - dealerCode
+        - name
+
+    UpdateDocTypeBody:
+      type: object
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+        sortOrder:
+          type: integer
+        isRequired:
+          type: boolean
+
+    PresignUploadBody:
+      type: object
+      properties:
+        fileName:
+          type: string
+        fileType:
+          type: string
+        dealFileId:
+          type: integer
+      required:
+        - fileName
+        - fileType
+        - dealFileId
+
+    PresignUploadResponse:
+      type: object
+      properties:
+        uploadUrl:
+          type: string
+        fileUrl:
+          type: string
+        fileName:
+          type: string
+      required:
+        - uploadUrl
+        - fileUrl
+        - fileName
