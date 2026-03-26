@@ -1,20 +1,54 @@
 import { Router, type IRouter } from "express";
-import { eq } from "drizzle-orm";
-import { db, usersTable } from "@workspace/db";
+import { eq, and, gt } from "drizzle-orm";
+import { db, usersTable, sessionsTable } from "@workspace/db";
 import { LoginBody } from "@workspace/api-zod";
 import crypto from "crypto";
 
 const router: IRouter = Router();
 
+const SALT = process.env["SESSION_SALT"] ?? "autoslm_salt_2024";
+const SESSION_TTL_DAYS = 30;
+
 function hashPassword(password: string): string {
-  return crypto.createHash("sha256").update(password + "autoslm_salt_2024").digest("hex");
+  return crypto.createHash("sha256").update(password + SALT).digest("hex");
 }
 
 function generateToken(): string {
   return crypto.randomBytes(32).toString("hex");
 }
 
-const sessions = new Map<string, number>();
+function sessionExpiry(): Date {
+  const d = new Date();
+  d.setDate(d.getDate() + SESSION_TTL_DAYS);
+  return d;
+}
+
+async function createSession(userId: number): Promise<string> {
+  const token = generateToken();
+  const expiresAt = sessionExpiry();
+  await db.insert(sessionsTable).values({ token, userId, expiresAt });
+  return token;
+}
+
+async function resolveSession(token: string): Promise<number | null> {
+  const [session] = await db
+    .select()
+    .from(sessionsTable)
+    .where(and(eq(sessionsTable.token, token), gt(sessionsTable.expiresAt, new Date())));
+  return session?.userId ?? null;
+}
+
+function formatUser(user: typeof usersTable.$inferSelect) {
+  return {
+    id: user.id,
+    username: user.username,
+    name: user.name,
+    email: user.email,
+    role: user.role,
+    dealerCode: user.dealerCode,
+    createdAt: user.createdAt,
+  };
+}
 
 router.post("/auth/login", async (req, res): Promise<void> => {
   const parsed = LoginBody.safeParse(req.body);
@@ -24,11 +58,11 @@ router.post("/auth/login", async (req, res): Promise<void> => {
   }
 
   const { username, password } = parsed.data;
+  const hash = hashPassword(password);
 
-  const [user] = await db.select().from(usersTable).where(eq(usersTable.username, username));
+  const [existing] = await db.select().from(usersTable).where(eq(usersTable.username, username));
 
-  if (!user) {
-    const hash = hashPassword(password);
+  if (!existing) {
     const [newUser] = await db.insert(usersTable).values({
       username,
       passwordHash: hash,
@@ -36,51 +70,25 @@ router.post("/auth/login", async (req, res): Promise<void> => {
       role: "admin",
       dealerCode: parsed.data.dealerCode || "0000",
     }).returning();
-    const token = generateToken();
-    sessions.set(token, newUser.id);
-    res.json({
-      user: {
-        id: newUser.id,
-        username: newUser.username,
-        name: newUser.name,
-        email: newUser.email,
-        role: newUser.role,
-        dealerCode: newUser.dealerCode,
-        createdAt: newUser.createdAt,
-      },
-      token,
-    });
+    const token = await createSession(newUser.id);
+    res.json({ user: formatUser(newUser), token });
     return;
   }
 
-  const hash = hashPassword(password);
-  if (user.passwordHash !== hash) {
+  if (existing.passwordHash !== hash) {
     res.status(401).json({ error: "Invalid username or password" });
     return;
   }
 
-  const token = generateToken();
-  sessions.set(token, user.id);
-
-  res.json({
-    user: {
-      id: user.id,
-      username: user.username,
-      name: user.name,
-      email: user.email,
-      role: user.role,
-      dealerCode: user.dealerCode,
-      createdAt: user.createdAt,
-    },
-    token,
-  });
+  const token = await createSession(existing.id);
+  res.json({ user: formatUser(existing), token });
 });
 
-router.post("/auth/logout", (req, res): void => {
+router.post("/auth/logout", async (req, res): Promise<void> => {
   const authHeader = req.headers.authorization;
   if (authHeader?.startsWith("Bearer ")) {
     const token = authHeader.slice(7);
-    sessions.delete(token);
+    await db.delete(sessionsTable).where(eq(sessionsTable.token, token));
   }
   res.json({ success: true });
 });
@@ -92,7 +100,7 @@ router.get("/auth/me", async (req, res): Promise<void> => {
     return;
   }
   const token = authHeader.slice(7);
-  const userId = sessions.get(token);
+  const userId = await resolveSession(token);
   if (!userId) {
     res.status(401).json({ error: "Session expired or invalid" });
     return;
@@ -102,16 +110,7 @@ router.get("/auth/me", async (req, res): Promise<void> => {
     res.status(401).json({ error: "User not found" });
     return;
   }
-  res.json({
-    id: user.id,
-    username: user.username,
-    name: user.name,
-    email: user.email,
-    role: user.role,
-    dealerCode: user.dealerCode,
-    createdAt: user.createdAt,
-  });
+  res.json(formatUser(user));
 });
 
-export { sessions };
 export default router;

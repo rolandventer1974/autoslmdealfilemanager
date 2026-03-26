@@ -57,10 +57,37 @@ artifacts-monorepo/
 ## Database Schema
 
 - `users` — authenticated users per dealer
+- `sessions` — persistent login sessions (token, userId, expiresAt) — 30-day TTL
 - `deal_files` — one record per car sale deal
 - `documents` — uploaded files associated with a deal file
 - `doc_types` — required document types configured per dealer
 - `api_keys` — API keys for AutoSLM integration
+
+## Environment Variables
+
+| Variable | Required | Description |
+|---|---|---|
+| `DATABASE_URL` | Yes | PostgreSQL connection string |
+| `PORT` | Yes | Port the API server listens on |
+| `SESSION_SALT` | Recommended | Secret salt for password hashing (defaults to dev value) |
+| `CORS_ORIGIN` | Production | Allowed CORS origin (e.g. `https://yourdomain.com`). Open in dev if unset |
+| `NODE_ENV` | Production | Set to `production` to serve frontend static files from Express |
+
+## Production Deployment (Digital Ocean / Ubuntu)
+
+In production (`NODE_ENV=production`) the Express API server also serves the built React frontend as static files — a single process handles everything.
+
+**Build steps:**
+1. `pnpm --filter @workspace/deal-file-manager run build` — builds React frontend to `dist/`
+2. `pnpm --filter @workspace/api-server run build` — compiles Express server
+3. `NODE_ENV=production node dist/index.mjs` — starts the combined server
+
+**What's production-ready:**
+- Sessions stored in PostgreSQL (`sessions` table) — survive server restarts
+- Security headers via `helmet`
+- CORS locked to `CORS_ORIGIN` env var in production
+- No HTTP caching on API responses
+- Single server serves both API (`/api/*`) and frontend (`/*`)
 
 ## TypeScript & Composite Projects
 
