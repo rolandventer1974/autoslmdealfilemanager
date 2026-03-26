@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useLocation, useParams } from "wouter";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { apiFetch } from "@/lib/api";
@@ -78,24 +78,27 @@ export default function DealFilePage() {
     queryKey: ["deal-file", id],
     queryFn: () => apiFetch<DealFileDetail>(`/deal-files/${id}`),
     enabled: !isNew,
-    onSuccess: (data) => {
-      setForm({
-        customerName: data.customerName || "",
-        idNumber: data.idNumber || "",
-        email: data.email || "",
-        mobileNumber: data.mobileNumber || "",
-        vehicleYear: data.vehicleYear || "",
-        vehicleMake: data.vehicleMake || "",
-        vehicleModel: data.vehicleModel || "",
-        vehicleSpec: data.vehicleSpec || "",
-        vinNumber: data.vinNumber || "",
-        salesExecutive: data.salesExecutive || "",
-        salesManager: data.salesManager || "",
-        financeCompany: data.financeCompany || "",
-        dealNumber: data.dealNumber || "",
-      });
-    },
   });
+
+  useEffect(() => {
+    if (dealFile) {
+      setForm({
+        customerName: dealFile.customerName || "",
+        idNumber: dealFile.idNumber || "",
+        email: dealFile.email || "",
+        mobileNumber: dealFile.mobileNumber || "",
+        vehicleYear: dealFile.vehicleYear || "",
+        vehicleMake: dealFile.vehicleMake || "",
+        vehicleModel: dealFile.vehicleModel || "",
+        vehicleSpec: dealFile.vehicleSpec || "",
+        vinNumber: dealFile.vinNumber || "",
+        salesExecutive: dealFile.salesExecutive || "",
+        salesManager: dealFile.salesManager || "",
+        financeCompany: dealFile.financeCompany || "",
+        dealNumber: dealFile.dealNumber || "",
+      });
+    }
+  }, [dealFile?.id]);
 
   const { data: docTypes = [] } = useQuery<DocType[]>({
     queryKey: ["doc-types", user?.dealerCode],
@@ -149,7 +152,7 @@ export default function DealFilePage() {
         body: JSON.stringify({ fileName: file.name, fileType: file.type, dealFileId: Number(id) }),
       });
 
-      const uploadRes = await fetch(`${base}/api${presign.uploadUrl}`, {
+      const uploadRes = await fetch(`${base}${presign.uploadUrl}`, {
         method: "PUT",
         body: file,
         headers: { "Content-Type": file.type },
@@ -219,6 +222,18 @@ export default function DealFilePage() {
           )}
         </div>
 
+        {isNew && (
+          <div className="bg-blue-50 border border-blue-200 rounded-xl p-4 flex gap-3">
+            <svg className="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <div>
+              <p className="text-sm font-medium text-blue-800">Creating a new deal file</p>
+              <p className="text-sm text-blue-700 mt-0.5">Fill in the customer and vehicle details below. Once the deal file is created, you can upload all required documents and track progress from the deal file page.</p>
+            </div>
+          </div>
+        )}
+
         {!isNew && dealFile && (
           <div className="bg-white rounded-xl border border-slate-200 p-4">
             <div className="flex items-center justify-between mb-2">
@@ -234,6 +249,16 @@ export default function DealFilePage() {
                 style={{ width: `${Math.min(dealFile.completionPercent, 100)}%` }}
               />
             </div>
+          </div>
+        )}
+
+        {!isNew && isLoading && (
+          <div className="bg-white rounded-xl border border-slate-200 p-4">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-sm font-medium text-slate-700">Document Completion</span>
+              <span className="text-sm text-slate-400">Loading...</span>
+            </div>
+            <div className="w-full bg-slate-200 rounded-full h-3 animate-pulse" />
           </div>
         )}
 
