@@ -1,0 +1,72 @@
+New task: Write a new standalone and complementary Saas application called AutoSLM Deal File Manager to complement an existing Web application called AutoSLM.
+ 
+The new Web based App module must be written in PHP. The main AutoSLM Web application is written in Adobe cold fusion (an older version) so we are going to bolt this new module on using links from Coldfusion to PHP. The overall module will also be self standing on it's own url www.autoslmdealfilemanager.co.za
+The new app will need a MySQL databases. 
+
+The overview of the module is provide a secure document repository for each deals paperwork when a car is sold.
+When  car is sold the Deal File Manager exists to allow the AutoSLM system users (car dealerships) to store all essential documents digitally.
+
+The new module will store all the documentation for each sale and provide a status as to it's completion - meaning when all required documents have been added via API from AutoSLM main 
+or uploaded to each customers DEAL FILE. 
+Each deal file will contain several documents of different formats like PDF, Jpeg, PNG and Word documents - some documents will be sent to it from the main AutoSLM application via API like the Offer to Purchase (OTP) via API (requires an API) and others scanned and importedcustomers a file directly (requires an upload function). 
+
+There should be a master setup area where an administrator will set up the requirements for each linked car dealership. This is a once ff setup where a Manager will set up which documents are required each deal file. Each document must have name to allow for the check for completion.
+So: Manager sets up the deal file required documents by adding a name for ach document needed and then gives the document a name.
+Example:
+Required document 1: Offer to Purchase (Pdf, Jpeg or Png)
+Required document 2: Costing Sheet (Pdf, Jpeg or Png)
+Required document 3: Signed Delivery form (Pdf, Jpeg or Png)
+Required Document 4: Vehicle inspection form (Pdf, Jpeg or Png)
+etc - allow unlimited documents to added/required in he management setup screen (Pdf, Jpeg or Png)
+The file is complete when all required documents have been added (Pdf, Jpeg or Png).
+
+he system app must display a list f all deal files complete and incomplete.
+
+
+Each AutoSLM car dealership as a 4 digit numeric identifier called <dealercode>. This dealercode will be used to check users user level and permissions from the main AutoLSM web application.
+
+The application must have a dashboard that shows a summary of all deal files that are incomplete in a list and a status of each deal file listed by Customer name - most recent to oldest with a sorting and search (search file will be customer name or mobile number) option. 
+
+A Deal file is created when an OTP is sent to it when the user clicks a button on AutoSLM - Create Deal File. This instruction will be sent from AutoSLM or the user can create a deal file on the AutoSLM Deal File Manager manually via a button. On clicking the create button a screen should open to capture: Customer Name ID Number Email address: Mobile Number: Vehicle Year: Vehicle Make: Vehicle Model: Vehicle Specification: VIN Number: Sales Executive: Sales Manager: Finance company: Start bulding this project so we can install it on a Digital Ocean std ubuntu server. 
+
+The Application needs a home page with a welcome screen, Logo and for users to log in (Username and Password) if going directly to the app or for the link to the main AutoSLM application I will provide a checklogin process to authenticate against the main AutoSLM applications. Users going directly to the new app AutoSLM Deal File Manager will be able to use the same AutoSLM username and password. For development phase when login is pressed just open the new app's home page.
+
+Guide to structure:
+
+Landing Page:
+Welcome to AutoSLM Deal File Manager
+Logo
+
+Username and Password login
+Submit button
+
+Home page:
+AutoSLM Deal File Manager
+Logo
+Manager setup Deal file structure ->
+
+Customer search field
+
+Date range fields: default month to date
+Button show ALL incomplete deals
+
+Deal File Dashboard
+Customer name 1 Status Date Created Sales Executive name 5/20 - 25%
+Customer name 2 Status  Date Created, Sales Executive Name 11/20 - 55%
+Customer name 3 Status  Date Created, Sales executive name 20/20 - 100%
+Etc
+
+Manager setup deal file structure page:
+
+Create/Update Deal file structure
+
+Required document 1 - Name (field)
++ another required document
+etc
+
+Save
+Cancel
+
+
+
+
