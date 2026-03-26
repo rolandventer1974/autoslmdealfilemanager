@@ -56,6 +56,9 @@ export default function DashboardPage() {
     queryKey: ["deal-files", queryParams],
     queryFn: () => apiFetch<DealFile[]>(`/deal-files?${queryParams}`),
     enabled: !!user?.dealerCode,
+    staleTime: 0,
+    refetchOnMount: "always",
+    refetchOnWindowFocus: true,
   });
 
   const filtered = useMemo(() => {

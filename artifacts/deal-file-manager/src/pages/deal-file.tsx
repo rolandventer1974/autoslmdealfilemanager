@@ -263,16 +263,21 @@ export default function DealFilePage() {
         )}
 
         <form onSubmit={handleSubmit} className="bg-white rounded-xl border border-slate-200 p-5 space-y-5">
-          <h3 className="font-semibold text-slate-800 pb-2 border-b border-slate-100">Customer Information</h3>
+          <div className="flex items-center justify-between pb-2 border-b border-slate-100">
+            <h3 className="font-semibold text-slate-800">Customer Information</h3>
+            <span className="text-xs text-slate-500"><span className="text-red-500">*</span> Required fields</span>
+          </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             {[
-              { label: "Customer Name *", key: "customerName", required: true },
-              { label: "ID Number", key: "idNumber" },
-              { label: "Email Address", key: "email", type: "email" },
-              { label: "Mobile Number", key: "mobileNumber", type: "tel" },
+              { label: "Customer Name", key: "customerName", required: true },
+              { label: "ID Number", key: "idNumber", required: true },
+              { label: "Email Address", key: "email", type: "email", required: true },
+              { label: "Mobile Number", key: "mobileNumber", type: "tel", required: true },
             ].map(({ label, key, type = "text", required }) => (
               <div key={key}>
-                <label className="block text-sm font-medium text-slate-700 mb-1">{label}</label>
+                <label className="block text-sm font-medium text-slate-700 mb-1">
+                  {label} <span className="text-red-500">*</span>
+                </label>
                 <input
                   type={type}
                   required={required}
@@ -309,14 +314,17 @@ export default function DealFilePage() {
           <h3 className="font-semibold text-slate-800 pb-2 border-b border-slate-100 pt-2">Deal Information</h3>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             {[
-              { label: "Sales Executive", key: "salesExecutive" },
+              { label: "Sales Executive", key: "salesExecutive", required: true },
               { label: "Sales Manager", key: "salesManager" },
               { label: "Finance Company", key: "financeCompany" },
-            ].map(({ label, key }) => (
+            ].map(({ label, key, required }) => (
               <div key={key}>
-                <label className="block text-sm font-medium text-slate-700 mb-1">{label}</label>
+                <label className="block text-sm font-medium text-slate-700 mb-1">
+                  {label}{required && <span className="text-red-500"> *</span>}
+                </label>
                 <input
                   type="text"
+                  required={required}
                   value={(form as Record<string, string>)[key]}
                   onChange={(e) => setForm((f) => ({ ...f, [key]: e.target.value }))}
                   className="w-full px-3 py-2.5 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"

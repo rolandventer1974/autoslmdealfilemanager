@@ -121,6 +121,18 @@ router.post("/deal-files", async (req, res): Promise<void> => {
     return;
   }
 
+  const { customerName, idNumber, email, mobileNumber, salesExecutive } = parsed.data;
+  const missingFields: string[] = [];
+  if (!customerName?.trim()) missingFields.push("Customer Name");
+  if (!idNumber?.trim()) missingFields.push("ID Number");
+  if (!email?.trim()) missingFields.push("Email Address");
+  if (!mobileNumber?.trim()) missingFields.push("Mobile Number");
+  if (!salesExecutive?.trim()) missingFields.push("Sales Executive");
+  if (missingFields.length > 0) {
+    res.status(400).json({ error: `Missing required fields: ${missingFields.join(", ")}` });
+    return;
+  }
+
   const [file] = await db.insert(dealFilesTable).values({
     dealerCode: parsed.data.dealerCode,
     customerName: parsed.data.customerName,
