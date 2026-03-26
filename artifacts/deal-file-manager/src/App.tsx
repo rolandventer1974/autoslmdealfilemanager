@@ -32,7 +32,6 @@ function Router() {
     <Switch>
       <Route path="/login" component={LoginPage} />
       <Route path="/setup" component={() => <ProtectedRoute component={SetupPage} />} />
-      <Route path="/deal-files/new" component={() => <ProtectedRoute component={DealFilePage} />} />
       <Route path="/deal-files/:id" component={() => <ProtectedRoute component={DealFilePage} />} />
       <Route path="/" component={() => <ProtectedRoute component={DashboardPage} />} />
       <Route component={NotFound} />
