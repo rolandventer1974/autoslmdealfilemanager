@@ -1,0 +1,24 @@
+0|autoslm  |     at ModuleLoader.defaultResolve (node:internal/modules/esm/loader:708:12)
+0|autoslm  |     at ModuleLoader.#cachedDefaultResolve (node:internal/modules/esm/loader:657:25)
+0|autoslm  |     at ModuleLoader.resolve (node:internal/modules/esm/loader:640:38)
+0|autoslm  |     at ModuleLoader.getModuleJobForImport (node:internal/modules/esm/loader:264:38)
+0|autoslm  |     at ModuleLoader.import (node:internal/modules/esm/loader:605:34)
+0|autoslm  |     at defaultImportModuleDynamicallyForScript (node:internal/modules/esm/utils:234:31)
+0|autoslm  |     at importModuleDynamicallyCallback (node:internal/modules/esm/utils:256:12) {
+0|autoslm  |   code: 'ERR_MODULE_NOT_FOUND',
+0|autoslm  |   url: 'file:///var/www/artifacts/api-server/dist/index.mjs'
+0|autoslm  | }
+
+/root/.pm2/logs/autoslm-out.log last 10 lines:
+0|autoslm  | {"level":30,"time":1774883120890,"pid":104626,"hostname":"Deal-File-Manager","req":{"id":3,"method":"GET","url":"/"},"res":{"statusCode":200},"responseTime":2,"msg":"request completed"}
+0|autoslm  | {"level":30,"time":1774883121091,"pid":104626,"hostname":"Deal-File-Manager","req":{"id":4,"method":"GET","url":"/qrimbgfo"},"res":{"statusCode":200},"responseTime":3,"msg":"request completed"}
+0|autoslm  | {"level":30,"time":1774883121223,"pid":104626,"hostname":"Deal-File-Manager","req":{"id":5,"method":"GET","url":"/"},"res":{"statusCode":200},"responseTime":3,"msg":"request completed"}
+0|autoslm  | {"level":30,"time":1774883121535,"pid":104626,"hostname":"Deal-File-Manager","req":{"id":6,"method":"GET","url":"/"},"res":{"statusCode":200},"responseTime":2,"msg":"request completed"}
+0|autoslm  | {"level":30,"time":1774883121626,"pid":104626,"hostname":"Deal-File-Manager","req":{"id":7,"method":"GET","url":"/wjtpsfcb"},"res":{"statusCode":200},"responseTime":2,"msg":"request completed"}
+0|autoslm  | {"level":30,"time":1774883121864,"pid":104626,"hostname":"Deal-File-Manager","req":{"id":8,"method":"GET","url":"/qrimbgfo"},"res":{"statusCode":200},"responseTime":2,"msg":"request completed"}
+0|autoslm  | {"level":30,"time":1774883121879,"pid":104626,"hostname":"Deal-File-Manager","req":{"id":9,"method":"GET","url":"/"},"res":{"statusCode":200},"responseTime":3,"msg":"request completed"}
+0|autoslm  | {"level":30,"time":1774883122413,"pid":104626,"hostname":"Deal-File-Manager","req":{"id":10,"method":"GET","url":"/"},"res":{"statusCode":200},"responseTime":2,"msg":"request completed"}
+0|autoslm  | {"level":30,"time":1774883123021,"pid":104626,"hostname":"Deal-File-Manager","req":{"id":11,"method":"GET","url":"/wjtpsfcb"},"res":{"statusCode":200},"responseTime":3,"msg":"request completed"}
+0|autoslm  | {"level":30,"time":1774883123499,"pid":104626,"hostname":"Deal-File-Manager","req":{"id":12,"method":"GET","url":"/"},"res":{"statusCode":200},"responseTime":3,"msg":"request completed"}
+
+root@Deal-File-Manager:/var/www#
