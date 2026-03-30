@@ -99,6 +99,14 @@ export default function DashboardPage() {
             <p className="text-sm text-slate-500">
               {isManagerRole(user?.role) ? "All deal files" : "Your deal files"}
             </p>
+            {user?.name && (
+              <p className="text-sm text-slate-700 mt-1">
+                <span className="font-medium">{user.name}</span>
+                {user.levelName && (
+                  <span className="text-slate-400"> &middot; {user.levelName}</span>
+                )}
+              </p>
+            )}
           </div>
           <button
             onClick={() => setLocation("/deal-files/new")}
