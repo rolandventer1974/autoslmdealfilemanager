@@ -1,6 +1,7 @@
 import { Router, type IRouter } from "express";
 import { eq, and, gte, lte, or, ilike, sql, desc } from "drizzle-orm";
 import { db, dealFilesTable, documentsTable, docTypesTable, apiKeysTable } from "@workspace/db";
+import { resolveCurrentUser, isManagerRole } from "../lib/session.js";
 
 import {
   ListDealFilesQueryParams,
@@ -50,6 +51,8 @@ router.get("/deal-files", async (req, res): Promise<void> => {
 
   const { search, dateFrom, dateTo, status, dealerCode } = parsed.data;
 
+  const currentUser = await resolveCurrentUser(req);
+
   const conditions = [];
   if (dealerCode) conditions.push(eq(dealFilesTable.dealerCode, dealerCode));
   if (dateFrom) conditions.push(gte(dealFilesTable.createdAt, new Date(dateFrom + "T00:00:00.000Z")));
@@ -59,6 +62,15 @@ router.get("/deal-files", async (req, res): Promise<void> => {
       or(
         ilike(dealFilesTable.customerName, `%${search}%`),
         ilike(dealFilesTable.mobileNumber, `%${search}%`)
+      )!
+    );
+  }
+
+  if (currentUser && !isManagerRole(currentUser.role)) {
+    conditions.push(
+      or(
+        eq(dealFilesTable.createdByUserId, currentUser.id),
+        ilike(dealFilesTable.salesExecutive, currentUser.name || currentUser.username)
       )!
     );
   }
@@ -133,8 +145,11 @@ router.post("/deal-files", async (req, res): Promise<void> => {
     return;
   }
 
+  const creator = await resolveCurrentUser(req);
+
   const [file] = await db.insert(dealFilesTable).values({
     dealerCode: parsed.data.dealerCode,
+    createdByUserId: creator?.id ?? null,
     customerName: parsed.data.customerName,
     idNumber: parsed.data.idNumber,
     email: parsed.data.email,

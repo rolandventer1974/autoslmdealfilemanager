@@ -1,10 +1,12 @@
-import { pgTable, text, serial, timestamp } from "drizzle-orm/pg-core";
+import { pgTable, text, serial, timestamp, integer } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod/v4";
+import { usersTable } from "./users";
 
 export const dealFilesTable = pgTable("deal_files", {
   id: serial("id").primaryKey(),
   dealerCode: text("dealer_code").notNull(),
+  createdByUserId: integer("created_by_user_id").references(() => usersTable.id, { onDelete: "set null" }),
   customerName: text("customer_name").notNull(),
   idNumber: text("id_number"),
   email: text("email"),

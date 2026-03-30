@@ -51,3 +51,20 @@ export function getAuthHeaders(): Record<string, string> {
   if (!token) return {};
   return { Authorization: `Bearer ${token}` };
 }
+
+const MANAGER_ROLE_KEYWORDS = [
+  "manager",
+  "principal",
+  "admin",
+  "dp",
+  " gm",
+  "general manager",
+  "director",
+  "owner",
+];
+
+export function isManagerRole(role: string | null | undefined): boolean {
+  if (!role) return false;
+  const lower = role.toLowerCase();
+  return MANAGER_ROLE_KEYWORDS.some((kw) => lower.includes(kw));
+}

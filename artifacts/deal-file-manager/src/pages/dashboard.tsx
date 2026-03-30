@@ -2,7 +2,7 @@ import { useState, useMemo } from "react";
 import { useLocation } from "wouter";
 import { useQuery } from "@tanstack/react-query";
 import { apiFetch } from "@/lib/api";
-import { getUser } from "@/lib/auth";
+import { getUser, isManagerRole } from "@/lib/auth";
 import AppLayout from "@/components/AppLayout";
 
 interface DealFile {
@@ -91,9 +91,10 @@ export default function DashboardPage() {
           <div>
             <h2 className="text-xl font-bold text-slate-900">Deal File Dashboard</h2>
             <p className="text-sm text-slate-500">
-              {user?.retailerName
-                ? `${user.retailerName} — Dealer ${user.dealerCode}`
-                : `Manage and track all deal files for dealer ${user?.dealerCode}`}
+              {user?.retailerName ? `${user.retailerName} — ` : ""}
+              {isManagerRole(user?.role)
+                ? "All deal files"
+                : "Your deal files"}
             </p>
           </div>
           <button
