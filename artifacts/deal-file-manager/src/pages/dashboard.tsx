@@ -45,17 +45,16 @@ export default function DashboardPage() {
 
   const queryParams = useMemo(() => {
     const params = new URLSearchParams();
-    if (user?.dealerCode) params.set("dealerCode", user.dealerCode);
     if (search) params.set("search", search);
     if (dateFrom) params.set("dateFrom", dateFrom);
     if (dateTo) params.set("dateTo", dateTo);
     return params.toString();
-  }, [user?.dealerCode, search, dateFrom, dateTo]);
+  }, [search, dateFrom, dateTo]);
 
   const { data: dealFiles = [], isLoading, error } = useQuery<DealFile[]>({
     queryKey: ["deal-files", queryParams],
     queryFn: () => apiFetch<DealFile[]>(`/deal-files?${queryParams}`),
-    enabled: !!user?.dealerCode,
+    enabled: !!user,
     staleTime: 0,
     refetchOnMount: "always",
     refetchOnWindowFocus: true,
@@ -76,14 +75,21 @@ export default function DashboardPage() {
     <AppLayout>
       <div className="p-4 lg:p-6 space-y-6">
 
-        {user?.mobileLogo && (
-          <div className="flex justify-center pt-2 pb-1">
-            <img
-              src={user.mobileLogo}
-              alt={user.retailerName || "Dealer logo"}
-              className="h-16 max-w-xs object-contain"
-              onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = "none"; }}
-            />
+        {(user?.retailerName || user?.mobileLogo) && (
+          <div className="flex flex-col items-center pt-2 pb-1 gap-2">
+            {user?.retailerName && (
+              <h1 className="text-2xl font-bold text-slate-800 tracking-tight text-center">
+                {user.retailerName}
+              </h1>
+            )}
+            {user?.mobileLogo && (
+              <img
+                src={user.mobileLogo}
+                alt={user.retailerName || "Dealer logo"}
+                className="h-16 max-w-xs object-contain"
+                onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = "none"; }}
+              />
+            )}
           </div>
         )}
 
@@ -91,10 +97,7 @@ export default function DashboardPage() {
           <div>
             <h2 className="text-xl font-bold text-slate-900">Deal File Dashboard</h2>
             <p className="text-sm text-slate-500">
-              {user?.retailerName ? `${user.retailerName} — ` : ""}
-              {isManagerRole(user?.role)
-                ? "All deal files"
-                : "Your deal files"}
+              {isManagerRole(user?.role) ? "All deal files" : "Your deal files"}
             </p>
           </div>
           <button

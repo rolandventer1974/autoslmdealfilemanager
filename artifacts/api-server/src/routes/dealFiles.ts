@@ -49,12 +49,19 @@ router.get("/deal-files", async (req, res): Promise<void> => {
     return;
   }
 
-  const { search, dateFrom, dateTo, status, dealerCode } = parsed.data;
-
   const currentUser = await resolveCurrentUser(req);
+  if (!currentUser) {
+    res.status(401).json({ error: "Unauthorised" });
+    return;
+  }
+
+  const { search, dateFrom, dateTo, status } = parsed.data;
 
   const conditions = [];
-  if (dealerCode) conditions.push(eq(dealFilesTable.dealerCode, dealerCode));
+
+  // Always scope to the logged-in user's dealer — never trust the client for this
+  conditions.push(eq(dealFilesTable.dealerCode, currentUser.dealerCode));
+
   if (dateFrom) conditions.push(gte(dealFilesTable.createdAt, new Date(dateFrom + "T00:00:00.000Z")));
   if (dateTo) conditions.push(lte(dealFilesTable.createdAt, new Date(dateTo + "T23:59:59.999Z")));
   if (search) {
@@ -66,7 +73,7 @@ router.get("/deal-files", async (req, res): Promise<void> => {
     );
   }
 
-  if (currentUser && !isManagerRole(currentUser.role)) {
+  if (!isManagerRole(currentUser.role)) {
     conditions.push(
       or(
         eq(dealFilesTable.createdByUserId, currentUser.id),
@@ -127,6 +134,12 @@ router.get("/deal-files", async (req, res): Promise<void> => {
 });
 
 router.post("/deal-files", async (req, res): Promise<void> => {
+  const creator = await resolveCurrentUser(req);
+  if (!creator) {
+    res.status(401).json({ error: "Unauthorised" });
+    return;
+  }
+
   const parsed = CreateDealFileBody.safeParse(req.body);
   if (!parsed.success) {
     res.status(400).json({ error: parsed.error.message });
@@ -145,11 +158,9 @@ router.post("/deal-files", async (req, res): Promise<void> => {
     return;
   }
 
-  const creator = await resolveCurrentUser(req);
-
   const [file] = await db.insert(dealFilesTable).values({
-    dealerCode: parsed.data.dealerCode,
-    createdByUserId: creator?.id ?? null,
+    dealerCode: creator.dealerCode,
+    createdByUserId: creator.id,
     customerName: parsed.data.customerName,
     idNumber: parsed.data.idNumber,
     email: parsed.data.email,
@@ -191,13 +202,21 @@ router.post("/deal-files", async (req, res): Promise<void> => {
 });
 
 router.get("/deal-files/:id", async (req, res): Promise<void> => {
+  const currentUser = await resolveCurrentUser(req);
+  if (!currentUser) {
+    res.status(401).json({ error: "Unauthorised" });
+    return;
+  }
+
   const params = GetDealFileParams.safeParse(req.params);
   if (!params.success) {
     res.status(400).json({ error: params.error.message });
     return;
   }
 
-  const [file] = await db.select().from(dealFilesTable).where(eq(dealFilesTable.id, params.data.id));
+  const [file] = await db.select().from(dealFilesTable).where(
+    and(eq(dealFilesTable.id, params.data.id), eq(dealFilesTable.dealerCode, currentUser.dealerCode))
+  );
   if (!file) {
     res.status(404).json({ error: "Deal file not found" });
     return;
@@ -251,6 +270,12 @@ router.get("/deal-files/:id", async (req, res): Promise<void> => {
 });
 
 router.patch("/deal-files/:id", async (req, res): Promise<void> => {
+  const currentUser = await resolveCurrentUser(req);
+  if (!currentUser) {
+    res.status(401).json({ error: "Unauthorised" });
+    return;
+  }
+
   const params = UpdateDealFileParams.safeParse(req.params);
   if (!params.success) {
     res.status(400).json({ error: params.error.message });
@@ -277,7 +302,7 @@ router.patch("/deal-files/:id", async (req, res): Promise<void> => {
   const [updated] = await db
     .update(dealFilesTable)
     .set(updateData)
-    .where(eq(dealFilesTable.id, params.data.id))
+    .where(and(eq(dealFilesTable.id, params.data.id), eq(dealFilesTable.dealerCode, currentUser.dealerCode)))
     .returning();
 
   if (!updated) {
@@ -320,6 +345,12 @@ router.patch("/deal-files/:id", async (req, res): Promise<void> => {
 });
 
 router.delete("/deal-files/:id", async (req, res): Promise<void> => {
+  const currentUser = await resolveCurrentUser(req);
+  if (!currentUser) {
+    res.status(401).json({ error: "Unauthorised" });
+    return;
+  }
+
   const params = DeleteDealFileParams.safeParse(req.params);
   if (!params.success) {
     res.status(400).json({ error: params.error.message });
@@ -327,7 +358,7 @@ router.delete("/deal-files/:id", async (req, res): Promise<void> => {
   }
   const [deleted] = await db
     .delete(dealFilesTable)
-    .where(eq(dealFilesTable.id, params.data.id))
+    .where(and(eq(dealFilesTable.id, params.data.id), eq(dealFilesTable.dealerCode, currentUser.dealerCode)))
     .returning();
 
   if (!deleted) {
