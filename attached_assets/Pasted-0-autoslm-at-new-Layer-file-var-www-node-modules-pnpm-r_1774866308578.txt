@@ -1,0 +1,71 @@
+0|autoslm  |     at new Layer (file:///var/www/node_modules/.pnpm/router@2.2.0/n                                                                                                             ode_modules/router/lib/layer.js:93:62)
+0|autoslm  |     at Function.route (file:///var/www/node_modules/.pnpm/router@2.                                                                                                             2.0/node_modules/router/index.js:428:17)
+0|autoslm  |     at Function.route (file:///var/www/node_modules/.pnpm/express@5                                                                                                             .2.1/node_modules/express/lib/application.js:257:22)
+0|autoslm  |     at Function.app2.<computed> [as get] (file:///var/www/node_modu                                                                                                             les/.pnpm/express@5.2.1/node_modules/express/lib/application.js:478:22)
+0|autoslm  |     at file:///var/www/artifacts/api-server/src/app.ts:63:7 {
+0|autoslm  |   originalPath: '*'
+0|autoslm  | }
+0|autoslm  | PathError [TypeError]: Missing parameter name at index 1: *; visit                                                                                                              https://git.new/pathToRegexpError for info
+0|autoslm  |     at name (file:///var/www/node_modules/.pnpm/path-to-regexp@8.3.                                                                                                             0/node_modules/path-to-regexp/src/index.ts:225:13)
+0|autoslm  |     at parse (file:///var/www/node_modules/.pnpm/path-to-regexp@8.3                                                                                                             .0/node_modules/path-to-regexp/src/index.ts:242:62)
+0|autoslm  |     at pathToRegexp (file:///var/www/node_modules/.pnpm/path-to-reg                                                                                                             exp@8.3.0/node_modules/path-to-regexp/src/index.ts:480:54)
+0|autoslm  |     at Object.match (file:///var/www/node_modules/.pnpm/path-to-reg                                                                                                             exp@8.3.0/node_modules/path-to-regexp/src/index.ts:438:28)
+0|autoslm  |     at matcher (file:///var/www/node_modules/.pnpm/router@2.2.0/nod                                                                                                             e_modules/router/lib/layer.js:86:23)
+0|autoslm  |     at new Layer (file:///var/www/node_modules/.pnpm/router@2.2.0/n                                                                                                             ode_modules/router/lib/layer.js:93:62)
+0|autoslm  |     at Function.route (file:///var/www/node_modules/.pnpm/router@2.                                                                                                             2.0/node_modules/router/index.js:428:17)
+0|autoslm  |     at Function.route (file:///var/www/node_modules/.pnpm/express@5                                                                                                             .2.1/node_modules/express/lib/application.js:257:22)
+0|autoslm  |     at Function.app2.<computed> [as get] (file:///var/www/node_modu                                                                                                             les/.pnpm/express@5.2.1/node_modules/express/lib/application.js:478:22)
+0|autoslm  |     at file:///var/www/artifacts/api-server/src/app.ts:63:7 {
+0|autoslm  |   originalPath: '*'
+0|autoslm  | }
+
+0|autoslm  | PathError [TypeError]: Missing parameter name at index 3: (.*); vis                                                                                                             it https://git.new/pathToRegexpError for info
+0|autoslm  |     at name (file:///var/www/node_modules/.pnpm/path-to-regexp@8.3.                                                                                                             0/node_modules/path-to-regexp/src/index.ts:225:13)
+0|autoslm  |     at parse (file:///var/www/node_modules/.pnpm/path-to-regexp@8.3                                                                                                             .0/node_modules/path-to-regexp/src/index.ts:242:62)
+0|autoslm  |     at pathToRegexp (file:///var/www/node_modules/.pnpm/path-to-reg                                                                                                             exp@8.3.0/node_modules/path-to-regexp/src/index.ts:480:54)
+0|autoslm  |     at Object.match (file:///var/www/node_modules/.pnpm/path-to-reg                                                                                                             exp@8.3.0/node_modules/path-to-regexp/src/index.ts:438:28)
+0|autoslm  |     at matcher (file:///var/www/node_modules/.pnpm/router@2.2.0/nod                                                                                                             e_modules/router/lib/layer.js:86:23)
+0|autoslm  |     at new Layer (file:///var/www/node_modules/.pnpm/router@2.2.0/n                                                                                                             ode_modules/router/lib/layer.js:93:62)
+0|autoslm  |     at Function.route (file:///var/www/node_modules/.pnpm/router@2.                                                                                                             2.0/node_modules/router/index.js:428:17)
+0|autoslm  |     at Function.route (file:///var/www/node_modules/.pnpm/express@5                                                                                                             .2.1/node_modules/express/lib/application.js:257:22)
+0|autoslm  |     at Function.app2.<computed> [as get] (file:///var/www/node_modu                                                                                                             les/.pnpm/express@5.2.1/node_modules/express/lib/application.js:478:22)
+0|autoslm  |     at file:///var/www/artifacts/api-server/src/app.ts:63:7 {
+0|autoslm  |   originalPath: '(.*)'
+0|autoslm  | }
+0|autoslm  | PathError [TypeError]: Missing parameter name at index 3: (.*); vis                                                                                                             it https://git.new/pathToRegexpError for info
+0|autoslm  |     at name (file:///var/www/node_modules/.pnpm/path-to-regexp@8.3.                                                                                                             0/node_modules/path-to-regexp/src/index.ts:225:13)
+0|autoslm  |     at parse (file:///var/www/node_modules/.pnpm/path-to-regexp@8.3                                                                                                             .0/node_modules/path-to-regexp/src/index.ts:242:62)
+0|autoslm  |     at pathToRegexp (file:///var/www/node_modules/.pnpm/path-to-reg                                                                                                             exp@8.3.0/node_modules/path-to-regexp/src/index.ts:480:54)
+0|autoslm  |     at Object.match (file:///var/www/node_modules/.pnpm/path-to-reg                                                                                                             exp@8.3.0/node_modules/path-to-regexp/src/index.ts:438:28)
+0|autoslm  |     at matcher (file:///var/www/node_modules/.pnpm/router@2.2.0/nod                                                                                                             e_modules/router/lib/layer.js:86:23)
+0|autoslm  |     at new Layer (file:///var/www/node_modules/.pnpm/router@2.2.0/n                                                                                                             ode_modules/router/lib/layer.js:93:62)
+0|autoslm  |     at Function.route (file:///var/www/node_modules/.pnpm/router@2.                                                                                                             2.0/node_modules/router/index.js:428:17)
+0|autoslm  |     at Function.route (file:///var/www/node_modules/.pnpm/express@5                                                                                                             .2.1/node_modules/express/lib/application.js:257:22)
+0|autoslm  |     at Function.app2.<computed> [as get] (file:///var/www/node_modu                                                                                                             les/.pnpm/express@5.2.1/node_modules/express/lib/application.js:478:22)
+0|autoslm  |     at file:///var/www/artifacts/api-server/src/app.ts:63:7 {
+0|autoslm  |   originalPath: '(.*)'
+0|autoslm  | }
+0|autoslm  | PathError [TypeError]: Missing parameter name at index 3: (.*); vis                                                                                                             it https://git.new/pathToRegexpError for info
+0|autoslm  |     at name (file:///var/www/node_modules/.pnpm/path-to-regexp@8.3.                                                                                                             0/node_modules/path-to-regexp/src/index.ts:225:13)
+0|autoslm  |     at parse (file:///var/www/node_modules/.pnpm/path-to-regexp@8.3                                                                                                             .0/node_modules/path-to-regexp/src/index.ts:242:62)
+0|autoslm  |     at pathToRegexp (file:///var/www/node_modules/.pnpm/path-to-reg                                                                                                             exp@8.3.0/node_modules/path-to-regexp/src/index.ts:480:54)
+0|autoslm  |     at Object.match (file:///var/www/node_modules/.pnpm/path-to-reg                                                                                                             exp@8.3.0/node_modules/path-to-regexp/src/index.ts:438:28)
+0|autoslm  |     at matcher (file:///var/www/node_modules/.pnpm/router@2.2.0/nod                                                                                                             e_modules/router/lib/layer.js:86:23)
+0|autoslm  |     at new Layer (file:///var/www/node_modules/.pnpm/router@2.2.0/n                                                                                                             ode_modules/router/lib/layer.js:93:62)
+0|autoslm  |     at Function.route (file:///var/www/node_modules/.pnpm/router@2.                                                                                                             2.0/node_modules/router/index.js:428:17)
+0|autoslm  |     at Function.route (file:///var/www/node_modules/.pnpm/express@5                                                                                                             .2.1/node_modules/express/lib/application.js:257:22)
+0|autoslm  |     at Function.app2.<computed> [as get] (file:///var/www/node_modu                                                                                                             les/.pnpm/express@5.2.1/node_modules/express/lib/application.js:478:22)
+0|autoslm  |     at file:///var/www/artifacts/api-server/src/app.ts:63:7 {
+0|autoslm  |   originalPath: '(.*)'
+0|autoslm  | }
+0|autoslm  | PathError [TypeError]: Missing parameter name at index 3: (.*); visit https://git.new/pathToRegexpError for info
+0|autoslm  |     at name (file:///var/www/node_modules/.pnpm/path-to-regexp@8.3.0/node_modules/path-to-regexp/src/index.ts:225:13)
+0|autoslm  |     at parse (file:///var/www/node_modules/.pnpm/path-to-regexp@8.3.0/node_modules/path-to-regexp/src/index.ts:242:62)
+0|autoslm  |     at pathToRegexp (file:///var/www/node_modules/.pnpm/path-to-regexp@8.3.0/node_modules/path-to-regexp/src/index.ts:480:54)
+0|autoslm  |     at Object.match (file:///var/www/node_modules/.pnpm/path-to-regexp@8.3.0/node_modules/path-to-regexp/src/index.ts:438:28)
+0|autoslm  |     at matcher (file:///var/www/node_modules/.pnpm/router@2.2.0/node_modules/router/lib/layer.js:86:23)
+0|autoslm  |     at new Layer (file:///var/www/node_modules/.pnpm/router@2.2.0/node_modules/router/lib/layer.js:93:62)
+0|autoslm  |     at Function.route (file:///var/www/node_modules/.pnpm/router@2.2.0/node_modules/router/index.js:428:17)
+0|autoslm  |     at Function.route (file:///var/www/node_modules/.pnpm/express@5.2.1/node_modules/express/lib/application.js:257:22)
+0|autoslm  |     at Function.app2.<computed> [as get] (file:///var/www/node_modules/.pnpm/express@5.2.1/node_modules/express/lib/application.js:478:22)
+0|autoslm  |     at file:///var/www/artifacts/api-server/src/app.ts:63:7 {
