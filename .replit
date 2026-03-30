@@ -27,3 +27,9 @@ timeoutMs = 20000
 
 [nix]
 channel = "stable-25_05"
+
+[userenv]
+
+[userenv.shared]
+AUTOSLM_API_BASE = "https://api.autoslm.com"
+AUTOSLM_DEALER_CODE = "1011"
