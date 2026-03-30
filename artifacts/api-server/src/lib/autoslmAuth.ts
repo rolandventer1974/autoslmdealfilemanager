@@ -6,6 +6,7 @@ export interface AutoSLMUserProfile {
   userId: string;
   displayName: string;
   levelId: string;
+  levelName: string;
   role: string;
   rid: string;
   retailerName: string;
@@ -94,94 +95,74 @@ function jsonStr(v: unknown): string {
   return JSON.stringify(v);
 }
 
+/**
+ * Parses the MobileAppV1 CheckLogin response.
+ *
+ * Actual response shape:
+ * {
+ *   "ResultSet": {
+ *     "MessageCode": "1000",
+ *     "Messagetxt": {
+ *       "datacount": "1",
+ *       "dataset": [{
+ *         "rid": "1011",
+ *         "retailername": "...",
+ *         "userid": "91396",
+ *         "name": "Mobile Test 2",
+ *         "levelid": "9",
+ *         "levelname": "Sales Exec",
+ *         "active": "1",
+ *         "email": "...",
+ *         "mobile": "...",
+ *         "retaileroptions": "...",
+ *         "dealergroups": "...",
+ *         "mobilelogohttps": "https://...",
+ *         "mobilelogohttp": "http://..."
+ *       }]
+ *     }
+ *   }
+ * }
+ *
+ * MessageCode "1000" = success with results.
+ * Failed login returns a different MessageCode or empty dataset.
+ */
 function parseAutoSLMResponse(data: unknown): AutoSLMUserProfile | null {
   if (!data || typeof data !== "object") return null;
 
   const d = data as Record<string, unknown>;
+  const resultSet = d["ResultSet"] as Record<string, unknown> | undefined;
+  if (!resultSet) return null;
 
-  const candidates: unknown[] = [
-    d["Dataset"],
-    d["dataset"],
-    d["Data"],
-    d["data"],
-    d["Result"],
-    d["result"],
-    d["Response"],
-    d["response"],
-    d,
-  ];
+  const messageCode = String(resultSet["MessageCode"] ?? "");
+  if (messageCode !== "1000") return null;
 
-  for (const candidate of candidates) {
-    if (!candidate) continue;
+  const messagetxt = resultSet["Messagetxt"] as Record<string, unknown> | undefined;
+  if (!messagetxt) return null;
 
-    const row = Array.isArray(candidate)
-      ? (candidate[0] as Record<string, unknown>)
-      : (candidate as Record<string, unknown>);
+  const dataset = messagetxt["dataset"];
+  if (!Array.isArray(dataset) || dataset.length === 0) return null;
 
-    if (!row || typeof row !== "object") continue;
+  const row = dataset[0] as Record<string, unknown>;
+  if (!row) return null;
 
-    const userId =
-      str(row["userId"]) ||
-      str(row["UserID"]) ||
-      str(row["UserId"]) ||
-      str(row["user_id"]);
+  const userId = str(row["userid"]);
+  if (!userId) return null;
 
-    if (!userId) continue;
+  const rid = str(row["rid"]);
+  const levelName = str(row["levelname"]);
 
-    return {
-      userId,
-      displayName:
-        str(row["displayName"]) ||
-        str(row["DisplayName"]) ||
-        str(row["Name"]) ||
-        str(row["name"]) ||
-        str(row["Username"]) ||
-        str(row["username"]),
-      levelId:
-        str(row["levelId"]) ||
-        str(row["LevelID"]) ||
-        str(row["LevelId"]) ||
-        str(row["level_id"]),
-      role:
-        str(row["role"]) ||
-        str(row["Role"]) ||
-        str(row["UserRole"]) ||
-        "sales",
-      rid:
-        str(row["rid"]) ||
-        str(row["RID"]) ||
-        str(row["Rid"]) ||
-        str(row["dealerRid"]) ||
-        str(row["DealerRID"]),
-      retailerName:
-        str(row["retailerName"]) ||
-        str(row["RetailerName"]) ||
-        str(row["Retailer"]) ||
-        str(row["retailer"]),
-      email: str(row["email"]) || str(row["Email"]) || str(row["EmailAddress"]),
-      mobile:
-        str(row["mobile"]) ||
-        str(row["Mobile"]) ||
-        str(row["MobileNumber"]) ||
-        str(row["mobileNumber"]),
-      mobileLogo:
-        str(row["mobileLogo"]) ||
-        str(row["MobileLogo"]) ||
-        str(row["Logo"]) ||
-        str(row["logo"]) ||
-        str(row["logoUrl"]) ||
-        str(row["LogoUrl"]),
-      dealerGroups: jsonStr(
-        row["dealerGroups"] ?? row["DealerGroups"] ?? row["Groups"] ?? null,
-      ),
-      retailerOptions: jsonStr(
-        row["retailerOptions"] ??
-          row["RetailerOptions"] ??
-          row["Options"] ??
-          null,
-      ),
-    };
-  }
-
-  return null;
+  return {
+    userId,
+    displayName: str(row["name"]),
+    levelId: str(row["levelid"]),
+    levelName,
+    role: levelName || "sales",
+    rid,
+    retailerName: str(row["retailername"]),
+    email: str(row["email"]),
+    mobile: str(row["mobile"]),
+    mobileLogo: str(row["mobilelogohttps"]) || str(row["mobilelogohttp"]),
+    dealerGroups: jsonStr(row["dealergroups"]),
+    retailerOptions: jsonStr(row["retaileroptions"]),
+  };
 }

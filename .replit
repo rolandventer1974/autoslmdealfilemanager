@@ -31,5 +31,5 @@ channel = "stable-25_05"
 [userenv]
 
 [userenv.shared]
-AUTOSLM_API_BASE = "https://api.autoslm.com"
+AUTOSLM_API_BASE = "https://api.autoslm.com/MobileAppV1/"
 AUTOSLM_DEALER_CODE = "1011"

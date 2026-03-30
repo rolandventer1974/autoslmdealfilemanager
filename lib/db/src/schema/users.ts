@@ -11,6 +11,7 @@ export const usersTable = pgTable("users", {
   role: text("role").notNull().default("sales"),
   dealerCode: text("dealer_code").notNull(),
   levelId: text("level_id"),
+  levelName: text("level_name"),
   rid: text("rid"),
   retailerName: text("retailer_name"),
   mobile: text("mobile"),

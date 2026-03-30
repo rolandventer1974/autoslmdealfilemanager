@@ -6,6 +6,7 @@ export interface AuthUser {
   role: string;
   dealerCode: string;
   levelId: string | null;
+  levelName: string | null;
   rid: string | null;
   retailerName: string | null;
   mobile: string | null;
