@@ -1,0 +1,14 @@
+0|autoslm  | Error: Cannot find module '/var/www/artifacts/api-server/dist/index                                                                                                             .mjs' imported from /usr/lib/node_modules/pm2/lib/ProcessContainerFork.js
+0|autoslm  |     at finalizeResolution (node:internal/modules/esm/resolve:283:11                                                                                                             )
+0|autoslm  |     at moduleResolve (node:internal/modules/esm/resolve:952:10)
+0|autoslm  |     at defaultResolve (node:internal/modules/esm/resolve:1188:11)
+0|autoslm  |     at ModuleLoader.defaultResolve (node:internal/modules/esm/loade                                                                                                             r:708:12)
+0|autoslm  |     at ModuleLoader.#cachedDefaultResolve (node:internal/modules/es                                                                                                             m/loader:657:25)
+0|autoslm  |     at ModuleLoader.resolve (node:internal/modules/esm/loader:640:3                                                                                                             8)
+0|autoslm  |     at ModuleLoader.getModuleJobForImport (node:internal/modules/es                                                                                                             m/loader:264:38)
+0|autoslm  |     at ModuleLoader.import (node:internal/modules/esm/loader:605:34                                                                                                             )
+0|autoslm  |     at defaultImportModuleDynamicallyForScript (node:internal/modul                                                                                                             es/esm/utils:234:31)
+0|autoslm  |     at importModuleDynamicallyCallback (node:internal/modules/esm/u                                                                                                             tils:256:12) {
+0|autoslm  |   code: 'ERR_MODULE_NOT_FOUND',
+0|autoslm  |   url: 'file:///var/www/artifacts/api-server/dist/index.mjs'
+0|autoslm  | }
