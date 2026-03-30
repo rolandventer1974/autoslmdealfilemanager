@@ -1,0 +1,38 @@
+0|autoslm  |     at ModuleLoader.import (node:internal/modules/esm/loader:605:34)
+0|autoslm  |     at defaultImportModuleDynamicallyForScript (node:internal/modules/esm/utils:234:31)
+0|autoslm  |     at importModuleDynamicallyCallback (node:internal/modules/esm/utils:256:12) {
+0|autoslm  |   code: 'ERR_MODULE_NOT_FOUND',
+0|autoslm  |   url: 'file:///var/www/artifacts/api-server/dist/index.mjs'
+0|autoslm  | }
+0|autoslm  | Error: Cannot find module '/var/www/artifacts/api-server/dist/index.mjs' imported from /usr/lib/node_modules/pm2/lib/ProcessContainerFork.js
+0|autoslm  |     at finalizeResolution (node:internal/modules/esm/resolve:283:11)
+0|autoslm  |     at moduleResolve (node:internal/modules/esm/resolve:952:10)
+0|autoslm  |     at defaultResolve (node:internal/modules/esm/resolve:1188:11)
+0|autoslm  |     at ModuleLoader.defaultResolve (node:internal/modules/esm/loader:708:12)
+0|autoslm  |     at ModuleLoader.#cachedDefaultResolve (node:internal/modules/esm/loader:657:25)
+0|autoslm  |     at ModuleLoader.resolve (node:internal/modules/esm/loader:640:38)
+0|autoslm  |     at ModuleLoader.getModuleJobForImport (node:internal/modules/esm/loader:264:38)
+0|autoslm  |     at ModuleLoader.import (node:internal/modules/esm/loader:605:34)
+0|autoslm  |     at defaultImportModuleDynamicallyForScript (node:internal/modules/esm/utils:234:31)
+0|autoslm  |     at importModuleDynamicallyCallback (node:internal/modules/esm/utils:256:12) {
+0|autoslm  |   code: 'ERR_MODULE_NOT_FOUND',
+0|autoslm  |   url: 'file:///var/www/artifacts/api-server/dist/index.mjs'
+0|autoslm  | }
+
+/root/.pm2/logs/autoslm-out.log last 20 lines:
+0|autoslm  | responseTime":2,"msg":"request completed"}
+0|autoslm  | {"level":30,"time":1774882826669,"pid":102354,"hostname":"Deal-File-Manager","req":{"id":161,"method":"GET","url":"/assets/index-EUh76g2G.js"},"res":{"statusCode":200},"responseTime":6,"msg":"request completed"}
+0|autoslm  | {"level":30,"time":1774882827702,"pid":102354,"hostname":"Deal-File-Manager","req":{"id":163,"method":"GET","url":"/favicon.svg"},"res":{"statusCode":200},"responseTime":2,"msg":"request completed"}
+0|autoslm  | {"level":30,"time":1774882837470,"pid":102354,"hostname":"Deal-File-Manager","req":{"id":164,"method":"POST","url":"/api/auth/login"},"res":{"statusCode":200},"responseTime":30,"msg":"request completed"}
+0|autoslm  | {"level":30,"time":1774882837709,"pid":102354,"hostname":"Deal-File-Manager","req":{"id":165,"method":"GET","url":"/api/deal-files"},"res":{"statusCode":200},"responseTime":6,"msg":"request completed"}
+0|autoslm  | {"level":30,"time":1774882879190,"pid":104542,"hostname":"Deal-File-Manager","port":3000,"msg":"Server listening"}
+0|autoslm  | {"level":30,"time":1774882884588,"pid":104542,"hostname":"Deal-File-Manager","req":{"id":1,"method":"GET","url":"/api/deal-files"},"res":{"statusCode":200},"responseTime":101,"msg":"request completed"}
+0|autoslm  | {"level":30,"time":1774882891643,"pid":104542,"hostname":"Deal-File-Manager","req":{"id":2,"method":"GET","url":"/"},"res":{"statusCode":200},"responseTime":7,"msg":"request completed"}
+0|autoslm  | {"level":30,"time":1774882891872,"pid":104542,"hostname":"Deal-File-Manager","req":{"id":3,"method":"GET","url":"/assets/index-EUh76g2G.js"},"res":{"statusCode":304},"responseTime":2,"msg":"request completed"}
+0|autoslm  | {"level":30,"time":1774882891875,"pid":104542,"hostname":"Deal-File-Manager","req":{"id":4,"method":"GET","url":"/assets/index-CKLZ0KgF.css"},"res":{"statusCode":304},"responseTime":1,"msg":"request completed"}
+0|autoslm  | {"level":30,"time":1774882892109,"pid":104542,"hostname":"Deal-File-Manager","req":{"id":5,"method":"GET","url":"/api/deal-files"},"res":{"statusCode":200},"responseTime":11,"msg":"request completed"}
+0|autoslm  | {"level":30,"time":1774882892113,"pid":104542,"hostname":"Deal-File-Manager","req":{"id":6,"method":"GET","url":"/favicon.svg"},"res":{"statusCode":304},"responseTime":1,"msg":"request completed"}
+0|autoslm  | {"level":30,"time":1774882904421,"pid":104542,"hostname":"Deal-File-Manager","req":{"id":7,"method":"POST","url":"/api/auth/login"},"res":{"statusCode":503},"err":{"type":"Error","message":"failed with status code 503","stack":"Error: failed with status code 503\n    at onResFinished (file:///var/www/node_modules/.pnpm/pino-http@10.5.0/node_modules/pino-http/logger.js:115:39)\n    at ServerResponse.onResponseComplete (file:///var/www/node_modules/.pnpm/pino-http@10.5.0/node_modules/pino-http/logger.js:178:14)\n    at ServerResponse.emit (node:events:536:35)\n    at onFinish (node:_http_outgoing:1031:10)\n    at callback (node:internal/streams/writable:766:21)\n    at afterWrite (node:internal/streams/writable:710:5)\n    at afterWriteTick (node:internal/streams/writable:696:10)\n    at processTicksAndRejections (node:internal/process/task_queues:81:21)"},"responseTime":8,"msg":"request errored"}
+0|autoslm  | {"level":30,"time":1774882912726,"pid":104542,"hostname":"Deal-File-Manager","req":{"id":8,"method":"POST","url":"/api/auth/login"},"res":{"statusCode":503},"err":{"type":"Error","message":"failed with status code 503","stack":"Error: failed with status code 503\n    at onResFinished (file:///var/www/node_modules/.pnpm/pino-http@10.5.0/node_modules/pino-http/logger.js:115:39)\n    at ServerResponse.onResponseComplete (file:///var/www/node_modules/.pnpm/pino-http@10.5.0/node_modules/pino-http/logger.js:178:14)\n    at ServerResponse.emit (node:events:536:35)\n    at onFinish (node:_http_outgoing:1031:10)\n    at callback (node:internal/streams/writable:766:21)\n    at afterWrite (node:internal/streams/writable:710:5)\n    at afterWriteTick (node:internal/streams/writable:696:10)\n    at processTicksAndRejections (node:internal/process/task_queues:81:21)"},"responseTime":2,"msg":"request errored"}
+
+root@Deal-File-Manager:/var/www#
