@@ -10,6 +10,8 @@ export interface AuthUser {
   retailerName: string | null;
   mobile: string | null;
   mobileLogo: string | null;
+  dealerGroups: string | null;
+  retailerOptions: string | null;
   createdAt: string;
 }
 

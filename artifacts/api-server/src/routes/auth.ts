@@ -55,6 +55,8 @@ function formatUser(user: typeof usersTable.$inferSelect) {
     retailerName: user.retailerName,
     mobile: user.mobile,
     mobileLogo: user.mobileLogo,
+    dealerGroups: user.dealerGroups,
+    retailerOptions: user.retailerOptions,
     createdAt: user.createdAt,
   };
 }
@@ -71,7 +73,11 @@ router.post("/auth/login", async (req, res): Promise<void> => {
   try {
     const profile = await checkAutoSLMLogin(username, password);
 
-    const dealerCode = profile.rid || profile.userId;
+    if (!profile.rid) {
+      res.status(503).json({ error: "Authentication service did not return a valid dealer RID" });
+      return;
+    }
+    const dealerCode = profile.rid;
 
     const [upserted] = await db
       .insert(usersTable)
