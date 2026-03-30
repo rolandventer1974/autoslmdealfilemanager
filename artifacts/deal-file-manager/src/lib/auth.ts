@@ -5,6 +5,11 @@ export interface AuthUser {
   email: string | null;
   role: string;
   dealerCode: string;
+  levelId: string | null;
+  rid: string | null;
+  retailerName: string | null;
+  mobile: string | null;
+  mobileLogo: string | null;
   createdAt: string;
 }
 

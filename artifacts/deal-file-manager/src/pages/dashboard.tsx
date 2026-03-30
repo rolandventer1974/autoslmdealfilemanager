@@ -75,10 +75,26 @@ export default function DashboardPage() {
   return (
     <AppLayout>
       <div className="p-4 lg:p-6 space-y-6">
+
+        {user?.mobileLogo && (
+          <div className="flex justify-center pt-2 pb-1">
+            <img
+              src={user.mobileLogo}
+              alt={user.retailerName || "Dealer logo"}
+              className="h-16 max-w-xs object-contain"
+              onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = "none"; }}
+            />
+          </div>
+        )}
+
         <div className="flex flex-col sm:flex-row gap-3 sm:items-center sm:justify-between">
           <div>
             <h2 className="text-xl font-bold text-slate-900">Deal File Dashboard</h2>
-            <p className="text-sm text-slate-500">Manage and track all deal files for dealer {user?.dealerCode}</p>
+            <p className="text-sm text-slate-500">
+              {user?.retailerName
+                ? `${user.retailerName} — Dealer ${user.dealerCode}`
+                : `Manage and track all deal files for dealer ${user?.dealerCode}`}
+            </p>
           </div>
           <button
             onClick={() => setLocation("/deal-files/new")}

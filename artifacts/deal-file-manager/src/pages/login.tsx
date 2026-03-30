@@ -6,7 +6,6 @@ export default function LoginPage() {
   const [, setLocation] = useLocation();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [dealerCode, setDealerCode] = useState("1234");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -20,7 +19,7 @@ export default function LoginPage() {
       const res = await fetch(`${base}/api/auth/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ username, password, dealerCode }),
+        body: JSON.stringify({ username, password }),
       });
       const data = await res.json();
       if (!res.ok) {
@@ -49,7 +48,7 @@ export default function LoginPage() {
             <span className="text-xl font-bold text-slate-800">AutoSLM</span>
           </div>
           <h1 className="text-2xl font-bold text-slate-900">Deal File Manager</h1>
-          <p className="text-slate-500 mt-1 text-sm">Secure document repository for your deals</p>
+          <p className="text-slate-500 mt-1 text-sm">Sign in with your AutoSLM credentials</p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
@@ -72,17 +71,6 @@ export default function LoginPage() {
               onChange={(e) => setPassword(e.target.value)}
               required
               placeholder="Enter your password"
-              className="w-full px-4 py-2.5 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-slate-900"
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-slate-700 mb-1">Dealer Code</label>
-            <input
-              type="text"
-              value={dealerCode}
-              onChange={(e) => setDealerCode(e.target.value)}
-              placeholder="4-digit dealer code"
-              maxLength={4}
               className="w-full px-4 py-2.5 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-slate-900"
             />
           </div>

@@ -97,7 +97,9 @@ export default function AppLayout({ children }: AppLayoutProps) {
           </button>
           <h1 className="font-semibold text-slate-800 text-lg">AutoSLM Deal File Manager</h1>
           <div className="ml-auto text-sm text-slate-500">
-            Dealer Code: <span className="font-mono font-medium text-slate-700">{user?.dealerCode}</span>
+            {user?.retailerName
+              ? <span className="font-medium text-slate-700">{user.retailerName}</span>
+              : <>Dealer: <span className="font-mono font-medium text-slate-700">{user?.dealerCode}</span></>}
           </div>
         </header>
 

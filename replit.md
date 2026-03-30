@@ -22,7 +22,7 @@ pnpm workspace monorepo using TypeScript. Contains the **AutoSLM Deal File Manag
 A document repository SaaS for car dealerships that allows storing and tracking all deal paperwork digitally.
 
 ### Features
-- **Login page** — username/password + dealer code authentication
+- **Login page** — username/password authentication via AutoSLM API
 - **Dashboard** — lists all deal files with search, date filter, status filter, progress bars
 - **Deal File view/create** — full customer/vehicle/deal info form + document management per file
 - **Document upload** — supports PDF, JPEG, PNG, DOCX via presign upload flow
@@ -69,9 +69,16 @@ artifacts-monorepo/
 |---|---|---|
 | `DATABASE_URL` | Yes | PostgreSQL connection string |
 | `PORT` | Yes | Port the API server listens on |
-| `SESSION_SALT` | Recommended | Secret salt for password hashing (defaults to dev value) |
+| `SESSION_SALT` | Recommended | Secret salt for session tokens (defaults to dev value) |
 | `CORS_ORIGIN` | Production | Allowed CORS origin (e.g. `https://yourdomain.com`). Open in dev if unset |
 | `NODE_ENV` | Production | Set to `production` to serve frontend static files from Express |
+| `AUTOSLM_API_BASE` | Yes | AutoSLM API base URL (e.g. `https://api.autoslm.com`) |
+| `AUTOSLM_ACCESS_CODE` | Yes | AutoSLM API security access code |
+| `AUTOSLM_DEALER_CODE` | No | Bootstrap dealer code for AutoSLM API calls (defaults to `1011`) |
+
+## Authentication
+
+Login is validated against the AutoSLM ColdFusion API (`CheckLogin` method). On success the user's full profile (name, role, dealer RID, retailer name, logo URL etc.) is upserted into the local `users` table and a 30-day session token is issued. The user's `rid` from the AutoSLM response becomes their `dealerCode` for all deal file queries.
 
 ## Production Deployment (Digital Ocean / Ubuntu)
 

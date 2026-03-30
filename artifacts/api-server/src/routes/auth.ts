@@ -3,15 +3,14 @@ import { eq, and, gt } from "drizzle-orm";
 import { db, usersTable, sessionsTable } from "@workspace/db";
 import { LoginBody } from "@workspace/api-zod";
 import crypto from "crypto";
+import {
+  checkAutoSLMLogin,
+  AutoSLMAuthError,
+} from "../lib/autoslmAuth.js";
 
 const router: IRouter = Router();
 
-const SALT = process.env["SESSION_SALT"] ?? "autoslm_salt_2024";
 const SESSION_TTL_DAYS = 30;
-
-function hashPassword(password: string): string {
-  return crypto.createHash("sha256").update(password + SALT).digest("hex");
-}
 
 function generateToken(): string {
   return crypto.randomBytes(32).toString("hex");
@@ -34,7 +33,12 @@ async function resolveSession(token: string): Promise<number | null> {
   const [session] = await db
     .select()
     .from(sessionsTable)
-    .where(and(eq(sessionsTable.token, token), gt(sessionsTable.expiresAt, new Date())));
+    .where(
+      and(
+        eq(sessionsTable.token, token),
+        gt(sessionsTable.expiresAt, new Date()),
+      ),
+    );
   return session?.userId ?? null;
 }
 
@@ -46,6 +50,11 @@ function formatUser(user: typeof usersTable.$inferSelect) {
     email: user.email,
     role: user.role,
     dealerCode: user.dealerCode,
+    levelId: user.levelId,
+    rid: user.rid,
+    retailerName: user.retailerName,
+    mobile: user.mobile,
+    mobileLogo: user.mobileLogo,
     createdAt: user.createdAt,
   };
 }
@@ -58,30 +67,64 @@ router.post("/auth/login", async (req, res): Promise<void> => {
   }
 
   const { username, password } = parsed.data;
-  const hash = hashPassword(password);
 
-  const [existing] = await db.select().from(usersTable).where(eq(usersTable.username, username));
+  try {
+    const profile = await checkAutoSLMLogin(username, password);
 
-  if (!existing) {
-    const [newUser] = await db.insert(usersTable).values({
-      username,
-      passwordHash: hash,
-      name: username,
-      role: "admin",
-      dealerCode: parsed.data.dealerCode || "0000",
-    }).returning();
-    const token = await createSession(newUser.id);
-    res.json({ user: formatUser(newUser), token });
-    return;
+    const dealerCode = profile.rid || profile.userId;
+
+    const [upserted] = await db
+      .insert(usersTable)
+      .values({
+        username,
+        passwordHash: "",
+        name: profile.displayName || username,
+        email: profile.email || null,
+        role: profile.role || "sales",
+        dealerCode,
+        levelId: profile.levelId || null,
+        rid: profile.rid || null,
+        retailerName: profile.retailerName || null,
+        mobile: profile.mobile || null,
+        mobileLogo: profile.mobileLogo || null,
+        dealerGroups: profile.dealerGroups || null,
+        retailerOptions: profile.retailerOptions || null,
+      })
+      .onConflictDoUpdate({
+        target: usersTable.username,
+        set: {
+          name: profile.displayName || username,
+          email: profile.email || null,
+          role: profile.role || "sales",
+          dealerCode,
+          levelId: profile.levelId || null,
+          rid: profile.rid || null,
+          retailerName: profile.retailerName || null,
+          mobile: profile.mobile || null,
+          mobileLogo: profile.mobileLogo || null,
+          dealerGroups: profile.dealerGroups || null,
+          retailerOptions: profile.retailerOptions || null,
+          updatedAt: new Date(),
+        },
+      })
+      .returning();
+
+    const token = await createSession(upserted.id);
+    res.json({ user: formatUser(upserted), token });
+  } catch (err: unknown) {
+    if (err instanceof AutoSLMAuthError) {
+      if (err.isCredentialError) {
+        res.status(401).json({ error: "Invalid username or password" });
+      } else {
+        res
+          .status(503)
+          .json({ error: `Authentication service unavailable: ${err.message}` });
+      }
+    } else {
+      const msg = err instanceof Error ? err.message : "Login failed";
+      res.status(500).json({ error: msg });
+    }
   }
-
-  if (existing.passwordHash !== hash) {
-    res.status(401).json({ error: "Invalid username or password" });
-    return;
-  }
-
-  const token = await createSession(existing.id);
-  res.json({ user: formatUser(existing), token });
 });
 
 router.post("/auth/logout", async (req, res): Promise<void> => {
@@ -105,7 +148,10 @@ router.get("/auth/me", async (req, res): Promise<void> => {
     res.status(401).json({ error: "Session expired or invalid" });
     return;
   }
-  const [user] = await db.select().from(usersTable).where(eq(usersTable.id, userId));
+  const [user] = await db
+    .select()
+    .from(usersTable)
+    .where(eq(usersTable.id, userId));
   if (!user) {
     res.status(401).json({ error: "User not found" });
     return;
