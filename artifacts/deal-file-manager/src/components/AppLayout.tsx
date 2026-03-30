@@ -96,10 +96,12 @@ export default function AppLayout({ children }: AppLayoutProps) {
             </svg>
           </button>
           <h1 className="font-semibold text-slate-800 text-lg">AutoSLM Deal File Manager</h1>
-          <div className="ml-auto text-sm text-slate-500">
-            {user?.retailerName
-              ? <span className="font-medium text-slate-700">{user.retailerName}</span>
-              : <>Dealer: <span className="font-mono font-medium text-slate-700">{user?.dealerCode}</span></>}
+          <div className="ml-auto">
+            <img
+              src="/autoslm-logo.jpg"
+              alt="AutoSLM"
+              className="h-8 w-auto object-contain"
+            />
           </div>
         </header>
 
