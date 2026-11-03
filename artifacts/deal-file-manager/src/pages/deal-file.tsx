@@ -59,6 +59,24 @@ const emptyForm = {
   dealNumber: "",
 };
 
+function dealFileToForm(dealFile: DealFileDetail) {
+  return {
+    customerName: dealFile.customerName || "",
+    idNumber: dealFile.idNumber || "",
+    email: dealFile.email || "",
+    mobileNumber: dealFile.mobileNumber || "",
+    vehicleYear: dealFile.vehicleYear || "",
+    vehicleMake: dealFile.vehicleMake || "",
+    vehicleModel: dealFile.vehicleModel || "",
+    vehicleSpec: dealFile.vehicleSpec || "",
+    vinNumber: dealFile.vinNumber || "",
+    salesExecutive: dealFile.salesExecutive || "",
+    salesManager: dealFile.salesManager || "",
+    financeCompany: dealFile.financeCompany || "",
+    dealNumber: dealFile.dealNumber || "",
+  };
+}
+
 export default function DealFilePage() {
   const { id } = useParams<{ id: string }>();
   const [, setLocation] = useLocation();
@@ -82,21 +100,7 @@ export default function DealFilePage() {
 
   useEffect(() => {
     if (dealFile) {
-      setForm({
-        customerName: dealFile.customerName || "",
-        idNumber: dealFile.idNumber || "",
-        email: dealFile.email || "",
-        mobileNumber: dealFile.mobileNumber || "",
-        vehicleYear: dealFile.vehicleYear || "",
-        vehicleMake: dealFile.vehicleMake || "",
-        vehicleModel: dealFile.vehicleModel || "",
-        vehicleSpec: dealFile.vehicleSpec || "",
-        vinNumber: dealFile.vinNumber || "",
-        salesExecutive: dealFile.salesExecutive || "",
-        salesManager: dealFile.salesManager || "",
-        financeCompany: dealFile.financeCompany || "",
-        dealNumber: dealFile.dealNumber || "",
-      });
+      setForm(dealFileToForm(dealFile));
     }
   }, [dealFile?.id]);
 
@@ -124,8 +128,9 @@ export default function DealFilePage() {
         method: "PATCH",
         body: JSON.stringify(data),
       }),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["deal-file", id] });
+    onSuccess: (savedFile) => {
+      queryClient.setQueryData<DealFileDetail>(["deal-file", id], savedFile);
+      setForm(dealFileToForm(savedFile));
       queryClient.invalidateQueries({ queryKey: ["deal-files"] });
       setFormSaved(true);
       setTimeout(() => setFormSaved(false), 3000);
@@ -463,7 +468,7 @@ export default function DealFilePage() {
                   );
                 })}
 
-                {dealFile?.documents.filter((d) => !docTypes.some((dt) => dt.id === d.docTypeId || dt.name === d.docTypeName)).length > 0 && (
+                {dealFile && dealFile.documents.filter((d) => !docTypes.some((dt) => dt.id === d.docTypeId || dt.name === d.docTypeName)).length > 0 && (
                   <div className="mt-4 pt-4 border-t border-slate-200">
                     <h4 className="text-sm font-medium text-slate-600 mb-2">Additional Documents</h4>
                     {dealFile.documents
