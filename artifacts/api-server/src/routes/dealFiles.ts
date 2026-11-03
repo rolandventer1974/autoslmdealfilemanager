@@ -294,8 +294,7 @@ router.patch("/deal-files/:id", async (req, res): Promise<void> => {
 
   for (const field of fields) {
     if ((parsed.data as Record<string, unknown>)[field] !== undefined) {
-      const dbField = field.replace(/([A-Z])/g, "_$1").toLowerCase();
-      updateData[dbField] = (parsed.data as Record<string, unknown>)[field];
+      updateData[field] = parsed.data[field];
     }
   }
 

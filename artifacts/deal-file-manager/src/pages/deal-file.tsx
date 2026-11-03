@@ -52,6 +52,8 @@ interface DealFileDetail {
   documents: Document[];
 }
 
+type SavedDealFile = Omit<DealFileDetail, "documents">;
+
 const emptyForm = {
   customerName: "", idNumber: "", email: "", mobileNumber: "",
   vehicleYear: "", vehicleMake: "", vehicleModel: "", vehicleSpec: "",
@@ -59,7 +61,7 @@ const emptyForm = {
   dealNumber: "",
 };
 
-function dealFileToForm(dealFile: DealFileDetail) {
+function dealFileToForm(dealFile: SavedDealFile) {
   return {
     customerName: dealFile.customerName || "",
     idNumber: dealFile.idNumber || "",
@@ -124,12 +126,15 @@ export default function DealFilePage() {
 
   const updateMutation = useMutation({
     mutationFn: (data: typeof form) =>
-      apiFetch<DealFileDetail>(`/deal-files/${id}`, {
+      apiFetch<SavedDealFile>(`/deal-files/${id}`, {
         method: "PATCH",
         body: JSON.stringify(data),
       }),
     onSuccess: (savedFile) => {
-      queryClient.setQueryData<DealFileDetail>(["deal-file", id], savedFile);
+      queryClient.setQueryData<DealFileDetail>(["deal-file", id], (previous) => ({
+        ...savedFile,
+        documents: previous?.documents ?? [],
+      }));
       setForm(dealFileToForm(savedFile));
       queryClient.invalidateQueries({ queryKey: ["deal-files"] });
       setFormSaved(true);
@@ -280,10 +285,11 @@ export default function DealFilePage() {
               { label: "Mobile Number", key: "mobileNumber", type: "tel", required: true },
             ].map(({ label, key, type = "text", required }) => (
               <div key={key}>
-                <label className="block text-sm font-medium text-slate-700 mb-1">
+                <label htmlFor={key} className="block text-sm font-medium text-slate-700 mb-1">
                   {label} <span className="text-red-500">*</span>
                 </label>
                 <input
+                  id={key}
                   type={type}
                   required={required}
                   value={(form as Record<string, string>)[key]}
@@ -305,8 +311,9 @@ export default function DealFilePage() {
               { label: "Deal Number", key: "dealNumber" },
             ].map(({ label, key }) => (
               <div key={key}>
-                <label className="block text-sm font-medium text-slate-700 mb-1">{label}</label>
+                <label htmlFor={key} className="block text-sm font-medium text-slate-700 mb-1">{label}</label>
                 <input
+                  id={key}
                   type="text"
                   value={(form as Record<string, string>)[key]}
                   onChange={(e) => setForm((f) => ({ ...f, [key]: e.target.value }))}
